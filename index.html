@@ -1,0 +1,230 @@
+<?php 
+    require '../auth_system/default.php';
+    $ris = array("");
+    $pass = TRUE;
+    if (isset($_POST['login'])){
+        echo '<script language=javascript>document.location.href="login.php"</script>';
+    }  
+    //Se la pagina viene aggiornata quando i cookie sono attivi li toglie per eliminare i campi già inseriti e gli errori
+    setcookie("EmailError", "");
+    $_COOKIE ["EmailError"] = "";
+    setcookie("PasswordError", "");
+    $_COOKIE ["PasswordError"] = "";
+    setcookie("PasswordCError", "");
+    $_COOKIE ["PasswordCError"] = "";
+    setcookie("NomeError", "");
+    $_COOKIE ["NomeError"] = "";
+    setcookie("CognomeError", "");
+    $_COOKIE ["CognomeError"] = "";
+    setcookie("NcError", "");
+    $_COOKIE ["NcError"] = "";
+    setcookie("email","");
+    $_COOKIE ["email"] = "";
+    setcookie("nome","");
+    $_COOKIE ["nome"] = "";
+    setcookie("cognome","");
+    $_COOKIE ["cognome"] = "";
+    setcookie("nomeValido","");
+    $_COOKIE ["nomeValido"] = "";
+    setcookie("cognomeValido","");
+    $_COOKIE ["cognomeValido"] = "";
+
+    if($_POST){ 
+        //Inserisco di nuovo i cookie per evitare l'aggiornamento della pagine dato che setta il valore ma lo prende solo dopo aver aggiornato la pagina commentare per mantenere visualizzato il campo con l'errore
+        $ris = $auth->registraNuovoUtente($_POST);
+        if(@in_array("Password non valida", $ris)){
+            setcookie("PasswordError", "*Password non valida",time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["PasswordError"] = "*Password non valida";
+        }
+
+        if(@in_array("Password e conferma non coincidono!", $ris)){
+            setcookie("PasswordCError", "*Password e conferma non coincidono!",time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["PasswordCError"] = "*Password e conferma non coincidono!";
+        }
+        
+        
+        if(@in_array("Email già presente", $ris)){
+            setcookie("EmailError", "*Email già presente",time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["EmailError"] = "*Email già presente";
+            $pass = FALSE;
+        }
+
+        if(@in_array("Email non valida", $ris)){
+            setcookie("EmailError", "*Email non valida",time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["EmailError"] = "*Email non valida";
+            $pass = FALSE;
+        }
+        if($pass){
+            setcookie("EmailError", "*✓ Email valida",time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["EmailError"] = "*✓ Email valida";
+            setcookie("email", $_POST['email'],time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["email"] = $_POST['email'];   
+        }else{
+            setcookie("email","");          
+            $_COOKIE ["email"] = "";
+        }
+
+        if(@in_array("Inserire un nome corretto", $ris)){
+            setcookie("NomeError", "*Inserire un nome corretto",time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["NomeError"] ="*Inserire un nome corretto";
+            setcookie("nome","");
+            $_COOKIE ["nome"] = "";
+        }else{
+            setcookie("nomeValido", "*✓ Nome valido",time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["nomeValido"] = "*✓ Nome valido";
+            setcookie("nome", $_POST['nome'],time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["nome"] = $_POST['nome'];
+        }
+
+        if(@in_array("Inserire un cognome corretto", $ris)){
+            setcookie("CognomeError", "*Inserire un cognome corretto",time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["CognomeError"] = "*Inserire un cognome corretto";
+            setcookie("cognome","");      
+            $_COOKIE ["cognome"] = "";
+        }else{
+            setcookie("cognomeValido", "*✓ Cognome valido",time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["cognomeValido"] = "*✓ Cognome valido";
+            setcookie("cognome", $_POST['cognome'],time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["cognome"] = $_POST['cognome'];
+        }
+
+        if(@in_array("Inserire conferma password", $ris) ){
+            setcookie("NcError", "*Inserire password di conferma",time() + (10 * 365 * 24 * 60 * 60));
+            $_COOKIE ["NcError"] = "*Inserire password di conferma";
+        }
+
+        //Se la registrazione avviene con successo elimina i cookie 
+        if(empty($ris)){
+            setcookie("EmailError", "");
+            $_COOKIE ["EmailError"] = "";
+            setcookie("PasswordError", "");
+            $_COOKIE ["PasswordError"] = "";
+            setcookie("PasswordCError", "");
+            $_COOKIE ["PasswordCError"] = "";
+            setcookie("NomeError", "");
+            $_COOKIE ["NomeError"] = "";
+            setcookie("CognomeError", "");
+            $_COOKIE ["CognomeError"] = "";
+            setcookie("NcError", "");
+            $_COOKIE ["NcError"] = "";
+            setcookie("email","");
+            $_COOKIE ["email"] = "";
+            setcookie("nome","");
+            $_COOKIE ["nome"] = "";
+            setcookie("cognome","");
+            $_COOKIE ["cognome"] = "";
+            setcookie("nomeValido","");
+            $_COOKIE ["nomeValido"] = "";
+            setcookie("cognomeValido","");
+            $_COOKIE ["cognomeValido"] = "";
+        }
+    }      
+    $pass = TRUE;
+
+?>
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin 2 - Register</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-gradient-primary">
+
+    <form action="<?php $_SERVER['PHP_SELF']?>" method="POST">
+
+        <div class="container">
+
+            <div class="card o-hidden border-0 shadow-lg my-5">
+                <div class="card-body">
+                    <!-- Nested Row within Card Body -->
+                    <div class="row">
+                    
+                        <div class="col-lg-12 p-5">
+                            <div class="p-5">
+                                <div class="text-center">
+                                <center>
+                                    <h1 class="h4 text-gray-900 mb-4">Crea Account LampEvents!</h1>
+                                </div>
+                                        <div class="form-group"> <!-- Text box Username -->
+                                            <div class="">
+                                                <?php if(isset($_COOKIE['EmailError'])){$email = $_COOKIE['EmailError']; if($email == "*✓ Email valida"){$color = "green";}else{$color = "#ff0000";}echo "<span style='color:$color;text-align:center;'>$email</span>";}?>
+                                                <input type="text" class="form-control form-control-user" name="email" value = "<?php if(isset($_COOKIE['email'])){echo $_COOKIE['email'];} ?>" placeholder="e-mail" style="text-align: center"> 
+                                            </div> 
+                                        </div>
+                                    
+                                        <div class="form-group row"> <!-- Text box Nome e Cognome -->
+                                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                                <?php if(isset($_COOKIE['nomeValido'])){ $nomV = $_COOKIE['nomeValido'];echo "<span style='color:green;text-align:center;'>$nomV</span>";}?>
+                                                <?php if(isset($_COOKIE['NomeError'])){$nom = $_COOKIE['NomeError'];echo "<span style='color:#ff0000;text-align:center;'>$nom</span>";}?>
+                                                <input type="text" class="form-control form-control-user" name="nome" value = "<?php if(isset($_COOKIE['nome'])){echo $_COOKIE['nome'];} ?>" placeholder="Nome">
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <?php if(isset($_COOKIE['cognomeValido'])){ $cognV = $_COOKIE['cognomeValido'];echo "<span style='color:green;text-align:center;'>$cognV</span>";}?>
+                                                <?php if(isset($_COOKIE['CognomeError'])){$cogn = $_COOKIE['CognomeError']; echo "<span style='color:#ff0000;text-align:center;'>$cogn</span>";}?>
+                                                <input type="text" class="form-control form-control-user" name="cognome" value = "<?php if(isset($_COOKIE['cognome'])){echo $_COOKIE['cognome'];} ?>" placeholder="Cognome">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row"> <!-- Text box Password      maccarone-->
+                                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                                <?php if(isset($_COOKIE['PasswordError'])){$pass = $_COOKIE['PasswordError']; echo "<span style='color:#ff0000;text-align:center;'>$pass</span>";}?>
+                                                <input type="password" class="form-control form-control-user" name="password" placeholder="Password">
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <?php if(isset($_COOKIE['NcError'])){$nc = $_COOKIE['NcError']; echo "<span style='color:#ff0000;text-align:center;'>$nc</span>";}?>
+                                                <input type="password" class="form-control form-control-user" name="conferma" placeholder="Conferma Password">
+                                            </div>
+                                        </div>
+                                    </center>
+                                        <?php if(isset($_COOKIE['PasswordCError'])){$passc = $_COOKIE['PasswordCError']; echo "<span style='color:#ff0000;text-align:center;'>$passc</span>";}?>
+                                        <button type="submit" id= "invia" name="invio" class="btn btn-primary btn-user btn-block">Registrati</button>
+
+                                        <hr>
+                                        
+                                        <button type="submit" name="login" class="btn btn-primary btn-user btn-block">Accedi</button></a>
+                                        
+                                
+                                
+                            </div>
+                
+                            <div class="text-center">
+                                
+
+                            </div>                      
+
+                        </div>    
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Core plugin JavaScript-->
+        <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+        <!-- Custom scripts for all pages-->
+        <script src="js/sb-admin-2.min.js"></script>
+    </form>
+</body>
+</html>
